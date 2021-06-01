@@ -80,6 +80,9 @@ modClicked = function(index){
 
 generateModList = function(){
     mods.forEach((item, index) => {
+        if (!item.url || !item.description || !item.author || !item.last_edited || !item.mod_version || !item.LT_version || !item.types) {
+            return;
+        }
 
         // get variables
         var summary = ""
@@ -106,20 +109,29 @@ generateModList = function(){
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path))
+        JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path));
         modJSONS.forEach(item => {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    var mod = JSON.parse(xhttp.responseText)
-                    mod.title = item.substr(0, item.length - 5).replaceAll("_", " ")
-                    mods.push(mod)
-                    if(mods.length == modJSONS.length) generateModList()
+                    try {
+                        var mod = JSON.parse(xhttp.responseText);
+                        mod.title = item.substr(0, item.length - 5).replaceAll("_", " ");
+                        mods.push(mod);
+                        if (mods.length == modJSONS.length) generateModList();
+                    } catch (e) {
+                        if (e instanceof SyntaxError) {
+                            console.log("Skipped " + item + " because of a syntax error");
+                            mods.push({});
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
             };
             xhttp.open("GET", "mods/" + item, true);
             xhttp.send();
-        })
+        });
     }
 };
 xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/df69cac3bacf6965df1ee1be4809a360f38631f3", true);
