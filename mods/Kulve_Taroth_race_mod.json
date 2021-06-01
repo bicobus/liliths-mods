@@ -1,0 +1,35 @@
+{
+    "url":"https://drive.google.com/drive/folders/1oXL3j4PUBDjiSPlzLp1Ck8CsGNG72MEJ?usp=sharing",
+    "summary":"Adds several Kulve Taroth from Monster Hunter to the world.",
+    "author"           : "The name of the modder",
+    "last_edited"      : "Use format yyyy-mm-dd",
+    "mod_version"      : "Version number of the mod",
+    "LT_version"       : "Version of LT it was last tested on, or built from in the case of a custom build",
+    "description":"New race mod:<br>Kulve Taroth (from Monster Hunter)<br><br>special moves :<br>-  gold shed<br>- heated air<br><br>TF item : gold plated steak<br><br>body parts :<br>all excepts tentacles, wings and antennas.",
+    "images":[],
+    "types":[
+        "Delete whatever doesn't apply",
+        "clothing",
+        "outfit",
+        "set",
+        "status effect",
+        "attack",
+        "race",
+        "tattoo",
+        "item",
+        "weapon",
+        "event",
+        "encounter",
+        "location",
+        "npc",
+        "other",
+        "outside mod folder",
+        "custom build"
+    ],
+    "dependencies":[
+        "A list of the names of each mod required for this one"
+    ],
+    "tags":[
+        "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
+    ]
+}
