@@ -1,16 +1,13 @@
 {
-    "url":"https://drive.google.com/drive/folders/1oXL3j4PUBDjiSPlzLp1Ck8CsGNG72MEJ?usp=sharing",
-    "summary":"Adds a fish species to the game.",
-    "author"           : "Charisma is confirmed Ligma Male",
-    "last_edited"      : "2021-05-29",
-    "mod_version"      : "Version number of the mod",
-    "LT_version"       : "0.4",
-    "description":"Species: Fish<br>Subspecies:Fish<br>Body parts changeable: standard human parts + tail<br>Special Attacks: none<br>TF item: Ahi Maki Sushi<br>Liquid item:<br>Piña Colada<br>Book Name: Slippery Fish<br><br>I made this mod back in December and never released it, because it was intended for the base game like spiders. Well, it's been months, so I might as well release it as a mod. There are a few reasons this didn't end up in the base game. One is probably that the art could use some work. Another is the inconsistent furriness. The main one is my hacky, weird trick to give fins their own colors independent of the limbs they are on, by hijacking the color of the ears. If you have fish ears, you will be able to set the covering color of all of the fish fins on your body, which includes arms, legs, and tailfin.",
-    "images":[],
-    "types":[
-        "race",
-        "item"
-    ],
-    "dependencies":[],
-    "tags":[]
+  "url": "https://drive.google.com/drive/folders/1oXL3j4PUBDjiSPlzLp1Ck8CsGNG72MEJ?usp=sharing",
+  "summary": "Adds a fish species to the game.",
+  "author": "Charisma is confirmed Ligma Male",
+  "last_edited": "2021-05-29",
+  "mod_version": "Version number of the mod",
+  "LT_version": "0.4",
+  "description": "Species: Fish<br>Subspecies:Fish<br>Body parts changeable: standard human parts + tail<br>Special Attacks: none<br>TF item: Ahi Maki Sushi<br>Liquid item:<br>Piña Colada<br>Book Name: Slippery Fish<br><br>I made this mod back in December and never released it, because it was intended for the base game like spiders. Well, it's been months, so I might as well release it as a mod. There are a few reasons this didn't end up in the base game. One is probably that the art could use some work. Another is the inconsistent furriness. The main one is my hacky, weird trick to give fins their own colors independent of the limbs they are on, by hijacking the color of the ears. If you have fish ears, you will be able to set the covering color of all of the fish fins on your body, which includes arms, legs, and tailfin.",
+  "images": [],
+  "types": ["race", "item"],
+  "dependencies": [],
+  "tags": []
 }

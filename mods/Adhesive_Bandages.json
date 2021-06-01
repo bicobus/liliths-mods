@@ -1,35 +1,40 @@
 {
-    "url":"https://drive.google.com/file/d/15ky0As96kw-3r_fXRszDodgoG352MOJW/view?usp=sharing",
-    "summary":"A box of adhesive bandages that can be worn.",
-    "author"           : "The name of the modder",
-    "last_edited"      : "Use format yyyy-mm-dd",
-    "mod_version"      : "Version number of the mod",
-    "LT_version"       : "Version of LT it was last tested on, or built from in the case of a custom build",
-    "description":"A box of adhesive bandages that can be worn on the nose(eyes slot), nipples, and vagina. It can be purchased from Ralph.",
-    "images":["https://cdn.discordapp.com/attachments/432303649268695070/847754985595863070/Screenshot_99.png", "https://cdn.discordapp.com/attachments/432303649268695070/847754985595863070/Screenshot_99.png", "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png", "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png", "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png", "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png"],
-    "types":[
-        "Delete whatever doesn't apply",
-        "clothing",
-        "outfit",
-        "set",
-        "status effect",
-        "attack",
-        "race",
-        "tattoo",
-        "item",
-        "weapon",
-        "event",
-        "encounter",
-        "location",
-        "npc",
-        "other",
-        "outside mod folder",
-        "custom build"
-    ],
-    "dependencies":[
-        "A list of the names of each mod required for this one"
-    ],
-    "tags":[
-        "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
-    ]
+  "url": "https://drive.google.com/file/d/15ky0As96kw-3r_fXRszDodgoG352MOJW/view?usp=sharing",
+  "summary": "A box of adhesive bandages that can be worn.",
+  "author": "The name of the modder",
+  "last_edited": "Use format yyyy-mm-dd",
+  "mod_version": "Version number of the mod",
+  "LT_version": "Version of LT it was last tested on, or built from in the case of a custom build",
+  "description": "A box of adhesive bandages that can be worn on the nose(eyes slot), nipples, and vagina. It can be purchased from Ralph.",
+  "images": [
+    "https://cdn.discordapp.com/attachments/432303649268695070/847754985595863070/Screenshot_99.png",
+    "https://cdn.discordapp.com/attachments/432303649268695070/847754985595863070/Screenshot_99.png",
+    "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png",
+    "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png",
+    "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png",
+    "https://cdn.discordapp.com/attachments/432303649268695070/847755004664479774/Screenshot_100.png"
+  ],
+  "types": [
+    "Delete whatever doesn't apply",
+    "clothing",
+    "outfit",
+    "set",
+    "status effect",
+    "attack",
+    "race",
+    "tattoo",
+    "item",
+    "weapon",
+    "event",
+    "encounter",
+    "location",
+    "npc",
+    "other",
+    "outside mod folder",
+    "custom build"
+  ],
+  "dependencies": ["A list of the names of each mod required for this one"],
+  "tags": [
+    "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
+  ]
 }

@@ -1,39 +1,37 @@
 {
-    "url"              : "The url where the mod is stored",
-    "summary"          : "OPTIONAL: replaces the description in the mod list",
-    "description"      : "A description of the mod. You should add a summary if this variable gets too big",
-    "author"           : "The name of the modder",
-    "last_edited"      : "Use format yyyy-mm-dd",
-    "mod_version"      : "Version number of the mod",
-    "LT_version"       : "Version of LT it was last tested on, or built from in the case of a custom build",
-    "cover"            : "OPTIONAL: The image displayed in the mod list. Please use URL's for images, not data blobs",
-    "types":[
-        "Delete whatever doesn't apply",
-        "clothing",
-        "outfit",
-        "set",
-        "status effect",
-        "attack",
-        "race",
-        "tattoo",
-        "item",
-        "weapon",
-        "event",
-        "encounter",
-        "location",
-        "npc",
-        "other",
-        "outside mod folder",
-        "custom build"
-    ],
-    "dependencies":[
-        "A list of the names of each mod required for this one"
-    ],
-    "images":[
-        "OPTIONAL:A widget that shows additional images near the top of the mod page",
-        "You can add multiple images"
-    ],
-    "tags":[
-        "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
-    ]
+  "url": "The url where the mod is stored",
+  "summary": "OPTIONAL: replaces the description in the mod list",
+  "description": "A description of the mod. You should add a summary if this variable gets too big",
+  "author": "The name of the modder",
+  "last_edited": "Use format yyyy-mm-dd",
+  "mod_version": "Version number of the mod",
+  "LT_version": "Version of LT it was last tested on, or built from in the case of a custom build",
+  "cover": "OPTIONAL: The image displayed in the mod list. Please use URL's for images, not data blobs",
+  "types": [
+    "Delete whatever doesn't apply",
+    "clothing",
+    "outfit",
+    "set",
+    "status effect",
+    "attack",
+    "race",
+    "tattoo",
+    "item",
+    "weapon",
+    "event",
+    "encounter",
+    "location",
+    "npc",
+    "other",
+    "outside mod folder",
+    "custom build"
+  ],
+  "dependencies": ["A list of the names of each mod required for this one"],
+  "images": [
+    "OPTIONAL:A widget that shows additional images near the top of the mod page",
+    "You can add multiple images"
+  ],
+  "tags": [
+    "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
+  ]
 }
