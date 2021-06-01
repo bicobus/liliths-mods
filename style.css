@@ -56,6 +56,7 @@ body {
     background-color: #19191A;
     margin-top: 5px;
     direction: ltr;
+    cursor: pointer;
 }
 
 #filter {
