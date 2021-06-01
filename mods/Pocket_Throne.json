@@ -1,36 +1,18 @@
 {
-    "url":"https://cdn.discordapp.com/attachments/432303649268695070/847940538883244092/poke.zip",
-    "summary":"a Pokémon race adding mod",
-    "author"           : "The name of the modder",
-    "last_edited"      : "Use format yyyy-mm-dd",
-    "mod_version"      : "Version number of the mod",
-    "LT_version"       : "Version of LT it was last tested on, or built from in the case of a custom build",
-    "description":"Version A.2.5<br>STORM HERALD UPDATE<br><br>Pokémon: Full list in the form, where you can suggest more: <a href=\"https://forms.gle/PrhUjWpUf9PNAt9C9\">https://forms.gle/PrhUjWpUf9PNAt9C9</a><br>Body parts changeable: Pretty much, yes.<br>Special Attacks: Razor Swipe & Pyro Ball<br>TF item: Various types of Energies<br>Liquid item: Vanilla Water<br>Book Name: PokéDex Chapters<br>Other: Includes Rare Candies and Evolutionary Items for evolving and regressing each Pokémon<br><br>NEW ADDITIONS:<br>Shinx, Luxio, Luxray<br>Goomy, Sliggoo, Goodra, Lilithian Goodra<br>Sobble, Drizzile, Inteleon<br><br>Description: This update should NOT have taken longer than a month :NotLikeBlobCat: ... Added a handful of Pokémon that a lot of people have been clamoring for. In addition, I've added a couple of notes that might appear in the alleyways. What could they mean??? (I'll elaborate on a later date, when I'm less tired) Also fixed a few bits and pieces here and there. One big thing was the racial essences, which I had to restructure a lotta parsing to fix. Full breakdown in the Changelog. Also, New pictures of the PokéThrone-tailored regional Lilithian Forms are included within the folder.",
+    "url":"https://cdn.discordapp.com/attachments/432303649268695070/849087314260918302/poke.zip",
+    "summary":"A Pokémon race adding mod",
+    "author"           : "Ein (PokéThrone guy)",
+    "last_edited"      : "2021-06-01",
+    "mod_version"      : "A.2.6",
+    "LT_version"       : "0.4",
+    "description":"Pokémon: Full list in the form, where you can suggest more: <a href=\"https://forms.gle/PrhUjWpUf9PNAt9C9\">https://forms.gle/PrhUjWpUf9PNAt9C9</a><br>Body parts changeable: Pretty much, yes.<br>Special Attacks: Razor Swipe & Pyro Ball<br>TF item: Various types of Energies<br>Liquid item: Vanilla Water<br>Book Name: PokéDex Chapters<br>Other: Includes Rare Candies and Evolutionary Items for evolving and regressing each Pokémon<br><br>NEW ADDITIONS:<br>Shinx, Luxio, Luxray<br>Goomy, Sliggoo, Goodra, Lilithian Goodra<br>Sobble, Drizzile, Inteleon<br><br>Description: This update should NOT have taken longer than a month :NotLikeBlobCat: ... Added a handful of Pokémon that a lot of people have been clamoring for. In addition, I've added a couple of notes that might appear in the alleyways. What could they mean??? (I'll elaborate on a later date, when I'm less tired) Also fixed a few bits and pieces here and there. One big thing was the racial essences, which I had to restructure a lotta parsing to fix. Full breakdown in the Changelog. Also, New pictures of the PokéThrone-tailored regional Lilithian Forms are included within the folder.",
     "cover": "https://media.discordapp.net/attachments/432303649268695070/847940750213382144/Lilithian_Goodra.png?width=927&height=676",
     "images":[],
     "types":[
-        "Delete whatever doesn't apply",
-        "clothing",
-        "outfit",
-        "set",
-        "status effect",
         "attack",
         "race",
-        "tattoo",
-        "item",
-        "weapon",
-        "event",
-        "encounter",
-        "location",
-        "npc",
-        "other",
-        "outside mod folder",
-        "custom build"
+        "item"
     ],
-    "dependencies":[
-        "A list of the names of each mod required for this one"
-    ],
-    "tags":[
-        "OPTIONAL:A list of words that can be used to find the mod when filtering on them"
-    ]
+    "dependencies":[],
+    "tags":[]
 }
