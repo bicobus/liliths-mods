@@ -88,7 +88,7 @@ generateModList = function(){
 
         var cover = ""
         if(item.cover) cover = item.cover
-        else if(item.images[0]) cover = item.images.shift()
+        else if(item.images[0]) cover = item.images[0]
         else cover = "https://raw.githubusercontent.com/Innoxia/liliths-throne-public/master/src/com/lilithsthrone/res/UIElements/menu.svg"
 
         // assemble list item
