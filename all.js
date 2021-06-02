@@ -103,10 +103,15 @@ generateModList = function(){
     })
 }
 
+exceededView = function(){
+    content.innerHTML = "You refreshed the page too many times. Come back when you've cooled down."
+}
+
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var xhttp = new XMLHttpRequest();
+        xhttp.onerror = exceededView()
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 JSON.parse(this.responseText).tree.forEach(item => modJSONS.push(item.path))
@@ -137,5 +142,6 @@ xhttp.onreadystatechange = function() {
         xhttp.send();
     }
 };
+xhttp.onerror = exceededView()
 xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/master", true);
 xhttp.send();
