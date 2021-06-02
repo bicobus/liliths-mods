@@ -80,7 +80,6 @@ modClicked = function(index){
 
 generateModList = function(){
     mods.forEach((item, index) => {
-
         // get variables
         var summary = ""
         if(item.summary) summary = item.summary
@@ -114,20 +113,36 @@ xhttp.onreadystatechange = function() {
         xhttp.onerror = exceededView()
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                JSON.parse(this.responseText).tree.forEach(item => modJSONS.push(item.path))
+                JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path));
+                let modJSONSSize = modJSONS.length;
                 modJSONS.forEach(item => {
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            var mod = JSON.parse(this.responseText)
-                            mod.title = item.substr(0, item.length - 5).replaceAll("_", " ")
-                            mods.push(mod)
-                            if(mods.length == modJSONS.length) generateModList()
+                            try {
+                                var mod = JSON.parse(this.responseText);
+                                mod.title = item.substr(0, item.length - 5).replaceAll("_", " ");
+                                if (!mod.url || !mod.description || !mod.author || !mod.last_edited || !mod.mod_version || !mod.LT_version || !mod.types) {
+                                    console.log("Skipped " + item + " because of missing required fields");
+                                    modJSONSSize--;
+                                } else {
+                                    mods.push(mod);
+                                }
+                            } catch (e) {
+                                if (e instanceof SyntaxError) {
+                                    console.log("Skipped " + item + " because of a syntax error");
+                                    modJSONSSize--;
+                                } else {
+                                    throw e;
+                                }
+                            } finally {
+                                if (mods.length == modJSONSSize) generateModList();
+                            }
                         }
                     };
                     xhttp.open("GET", "mods/" + item, true);
                     xhttp.send();
-                })
+                });
             }
         };
         var tree =  JSON.parse(this.responseText).tree
