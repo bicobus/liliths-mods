@@ -111,7 +111,6 @@ var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var xhttp = new XMLHttpRequest();
-        xhttp.onerror = exceededView()
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 JSON.parse(this.responseText).tree.forEach(item => modJSONS.push(item.path))
@@ -128,7 +127,7 @@ xhttp.onreadystatechange = function() {
                     xhttp.open("GET", "mods/" + item, true);
                     xhttp.send();
                 })
-            }
+            } else if(this.status == 403) exceededView()
         };
         var tree =  JSON.parse(this.responseText).tree
         var url = ""
@@ -140,8 +139,8 @@ xhttp.onreadystatechange = function() {
         }
         xhttp.open("GET", url, true);
         xhttp.send();
-    }
+    } else if(this.status == 403) exceededView()
 };
-xhttp.onerror = exceededView()
+xhttp.onerror = exceededView
 xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/master", true);
 xhttp.send();
