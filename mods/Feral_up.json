@@ -1,0 +1,11 @@
+{
+    "url"              : "https://mega.nz/file/wL4BTQ6B#e6mDZ2fh5eNdf-GXlGbG739QVXRhjTBXPYAFYSAMCbg",
+    "description"      : "A debug item that will turn the user into a feral or back again, sadly without any transformation text.",
+    "author"           : "JameSoha",
+    "last_edited"      : "2021-01-04",
+    "mod_version"      : "2",
+    "LT_version"       : "0.3.13",
+    "types":[ "item" ],
+    "images":[ "https://cdn.discordapp.com/attachments/432303649268695070/795559189254111232/Untitled.png" ],
+    "tags":[ "feral", "debug", "transformative" ]
+}

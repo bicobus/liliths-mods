@@ -80,10 +80,6 @@ modClicked = function(index){
 
 generateModList = function(){
     mods.forEach((item, index) => {
-        if (!item.url || !item.description || !item.author || !item.last_edited || !item.mod_version || !item.LT_version || !item.types) {
-            return;
-        }
-
         // get variables
         var summary = ""
         if(item.summary) summary = item.summary
@@ -91,7 +87,7 @@ generateModList = function(){
 
         var cover = ""
         if(item.cover) cover = item.cover
-        else if(item.images[0]) cover = item.images.shift()
+        else if(item.images[0]) cover = item.images[0]
         else cover = "https://raw.githubusercontent.com/Innoxia/liliths-throne-public/master/src/com/lilithsthrone/res/UIElements/menu.svg"
 
         // assemble list item
@@ -109,30 +105,54 @@ generateModList = function(){
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path));
-        modJSONS.forEach(item => {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    try {
-                        var mod = JSON.parse(xhttp.responseText);
-                        mod.title = item.substr(0, item.length - 5).replaceAll("_", " ");
-                        mods.push(mod);
-                        if (mods.length == modJSONS.length) generateModList();
-                    } catch (e) {
-                        if (e instanceof SyntaxError) {
-                            console.log("Skipped " + item + " because of a syntax error");
-                            mods.push({});
-                        } else {
-                            throw e;
+        var xhttp = new XMLHttpRequest();
+        console.log(this.responseText);
+        console.log(JSON.parse(this.responseText));
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path));
+                let modJSONSSize = modJSONS.length;
+                modJSONS.forEach(item => {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            try {
+                                var mod = JSON.parse(xhttp.responseText);
+                                mod.title = item.substr(0, item.length - 5).replaceAll("_", " ");
+                                if (!mod.url || !mod.description || !mod.author || !mod.last_edited || !mod.mod_version || !mod.LT_version || !mod.types) {
+                                    console.log("Skipped " + item + " because of missing required fields");
+                                    modJSONSSize--;
+                                } else {
+                                    mods.push(mod);
+                                }
+                            } catch (e) {
+                                if (e instanceof SyntaxError) {
+                                    console.log("Skipped " + item + " because of a syntax error");
+                                    modJSONSSize--;
+                                } else {
+                                    throw e;
+                                }
+                            } finally {
+                                if (mods.length == modJSONSSize) generateModList();
+                            }
                         }
-                    }
-                }
-            };
-            xhttp.open("GET", "mods/" + item, true);
-            xhttp.send();
-        });
+                    };
+                    xhttp.open("GET", "mods/" + item, true);
+                    xhttp.send();
+                });
+            }
+        };
+        var url = ""
+        JSON.parse(this.responseText).forEach(item => {
+            if(item.path == "mods"){
+                url = item.url
+                break
+            }
+        })
+        xhttp.open("GET", url, true);
+        xhttp.send();
     }
 };
-xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/df69cac3bacf6965df1ee1be4809a360f38631f3", true);
+xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/master", true);
 xhttp.send();
