@@ -106,21 +106,28 @@ generateModList = function(){
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path))
-        modJSONS.forEach(item => {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    var mod = JSON.parse(xhttp.responseText)
-                    mod.title = item.substr(0, item.length - 5).replaceAll("_", " ")
-                    mods.push(mod)
-                    if(mods.length == modJSONS.length) generateModList()
-                }
-            };
-            xhttp.open("GET", "mods/" + item, true);
-            xhttp.send();
-        })
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path))
+                modJSONS.forEach(item => {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var mod = JSON.parse(xhttp.responseText)
+                            mod.title = item.substr(0, item.length - 5).replaceAll("_", " ")
+                            mods.push(mod)
+                            if(mods.length == modJSONS.length) generateModList()
+                        }
+                    };
+                    xhttp.open("GET", "mods/" + item, true);
+                    xhttp.send();
+                })
+            }
+        };
+        xhttp.open("GET", JSON.parse(xhttp.responseText).tree.mods.url, true);
+        xhttp.send();
     }
 };
-xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/df69cac3bacf6965df1ee1be4809a360f38631f3", true);
+xhttp.open("GET", "https://api.github.com/repos/commit-man/liliths-mods/git/trees/master", true);
 xhttp.send();
