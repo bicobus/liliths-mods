@@ -107,8 +107,11 @@ var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var xhttp = new XMLHttpRequest();
+        console.log(this.responseText)
+        console.log(JSON.parse(this.responseText))
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText)
                 JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path))
                 modJSONS.forEach(item => {
                     var xhttp = new XMLHttpRequest();
@@ -125,7 +128,14 @@ xhttp.onreadystatechange = function() {
                 })
             }
         };
-        xhttp.open("GET", JSON.parse(xhttp.responseText).tree.mods.url, true);
+        var url = ""
+        JSON.parse(this.responseText).forEach(item => {
+            if(item.path == "mods"){
+                url = item.url
+                break
+            }
+        })
+        xhttp.open("GET", url, true);
         xhttp.send();
     }
 };
