@@ -106,11 +106,8 @@ var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var xhttp = new XMLHttpRequest();
-        console.log(this.responseText);
-        console.log(JSON.parse(this.responseText));
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
                 JSON.parse(xhttp.responseText).tree.forEach(item => modJSONS.push(item.path));
                 let modJSONSSize = modJSONS.length;
                 modJSONS.forEach(item => {
@@ -118,7 +115,7 @@ xhttp.onreadystatechange = function() {
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
                             try {
-                                var mod = JSON.parse(xhttp.responseText);
+                                var mod = JSON.parse(this.responseText);
                                 mod.title = item.substr(0, item.length - 5).replaceAll("_", " ");
                                 if (!mod.url || !mod.description || !mod.author || !mod.last_edited || !mod.mod_version || !mod.LT_version || !mod.types) {
                                     console.log("Skipped " + item + " because of missing required fields");
@@ -143,13 +140,14 @@ xhttp.onreadystatechange = function() {
                 });
             }
         };
+        var tree =  JSON.parse(this.responseText).tree
         var url = ""
-        JSON.parse(this.responseText).forEach(item => {
-            if(item.path == "mods"){
-                url = item.url
+        for(index in tree){
+            if(tree[index].path == "mods"){
+                url = tree[index].url
                 break
             }
-        })
+        }
         xhttp.open("GET", url, true);
         xhttp.send();
     }
