@@ -15,6 +15,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkoutv2.3.4
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: "3.x"
+      - run: |
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install jsonschema
       - name: Retrieve list of modified files
         id: list-files
         run: |
