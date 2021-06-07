@@ -13,9 +13,6 @@ from pathlib import Path
 
 from jsonschema import Draft7Validator
 
-# TODO write workflow to go with this file. Following link might be a nice example
-# https://github.com/github/docs/blob/main/.github/workflows/check-all-english-links.yml
-
 # this is so dumb, but I don't have to import os.
 basepath = Path(__file__).resolve().parts[:-3]
 JSONFILE = Path(*basepath, "template.json")
@@ -73,7 +70,8 @@ if __name__ == "__main__":
     parser.add_argument("file", nargs="+", metavar="FILE")
     args = parser.parse_args()
 
-    if not args.file:
+    # Exit early if we either have no file or none of them are json.
+    if not args.file or not any(f.endswith('.json') for f in args.file):
         exit
 
     diagnostics = []
@@ -114,4 +112,6 @@ if __name__ == "__main__":
                 )
             )
 
-    print("\n- - -\n".join(error_msgs))
+    if error_msgs:  # Exit with an error to fail the CI.
+        print("\n- - -\n".join(error_msgs))
+        exit(1)
