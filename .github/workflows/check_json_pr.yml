@@ -29,7 +29,7 @@ jobs:
           URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
           FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename'))
           for f in ${FILES[@]}; do
-            NFILE+="$(echo $f | awk '/mods\/.*\.json$/') "
+            NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
           done
           echo "::set-output name=files::$NFILES"
 
