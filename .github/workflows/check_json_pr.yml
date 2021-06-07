@@ -2,7 +2,8 @@ name: Check validity of JSON files
 
 on:
   workflow_run:
-    workflows: ["lint"]
+    workflows:
+      - lint
     branches: [master]
     types:
       - completed
@@ -26,8 +27,12 @@ jobs:
         id: list-files
         run: |
           URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
-          FILES=$(curl -s -X GET -G $URL | jq -r '.[] | .filename')
-          echo "::set-output name=files::$FILES"
+          FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename'))
+          for f in ${FILES[@]}; do
+            NFILE+="$(echo $f | awk '/mods\/.*\.json$/') "
+          done
+          echo "::set-output name=files::$NFILES"
+
       - name: Run checks
         id: checks
         run: |
