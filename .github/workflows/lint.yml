@@ -1,4 +1,5 @@
 name: lint
+description: Runs prettier on various json files.
 
 on:
   pull_request:
@@ -25,12 +26,15 @@ jobs:
           for f in ${FILES[@]}; do
             NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
           done
-          echo "::set-output name=files::$NFILES"
+          echo "list_files=\"${NFILES}\"" >> $GITHUB_ENV
+          echo "::group::Files to check"
+          echo "${NFILES}"
+          echo "::endgroup::"
 
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -w ${{ steps.list-files.output.files }}
+          prettier_options: -w ${{ env.list_files }}
           only_changed: True
           dry: True
         env:
