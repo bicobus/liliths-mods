@@ -25,7 +25,7 @@ jobs:
           for f in ${FILES[@]}; do
             NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
           done
-          echo "list_files=\"${NFILES}\"" >> $GITHUB_ENV
+          echo "list_files=${NFILES}" >> $GITHUB_ENV
           echo "::group::Files to check"
           echo "${NFILES}"
           echo "::endgroup::"
