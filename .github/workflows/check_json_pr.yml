@@ -1,0 +1,79 @@
+name: Check validity of JSON files
+
+on:
+  workflow_run:
+    workflows:
+      - lint
+    branches: [master]
+    types:
+      - completed
+
+jobs:
+  check-json-files:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkoutv2.3.4
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: "3.x"
+      - run: |
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install jsonschema[format]
+      - name: Retrieve list of modified files
+        id: list-files
+        run: |
+          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
+          FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename'))
+          for f in ${FILES[@]}; do
+            NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
+          done
+          echo "list_files=${NFILES}" >> $GITHUB_ENV
+          echo "::group::Files to check"
+          echo "${NFILES}"
+          echo "::endgroup::"
+
+      - name: Run checks
+        id: checks
+        run: |
+          .github/scripts/sentinel.py ${{ env.list_files }} > msg.txt 2>err.txt
+          if [[ -s "msg.txt" ]]; then
+            echo "::set-output name=has_report::yes"
+            echo "::set-output name=body::$(<msg.txt)"
+          else
+            echo "::set-output name=has_report::no"
+          fi
+          [[ -s "err.txt" ]] && echo "::set-output name=breakage::1"
+      - name: Find Comment
+        uses: peter-evans/find-comment@v1
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "Blip Blop I'm a robot"
+      - if: ${{ steps.checks.output.has_report == "yes"}}
+        name: Create comment on PR
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Blip Blop I'm a robot, and I detected that your submission did not pass the verification process.
+
+            ${{ steps.checks.outputs.body }}
+            --
+            This comment will automatically be updated as you update your pull request.
+      - if: ${{ failure() && steps.checks.outputs.breakage }}
+        name: Report Sentinel breakage
+        uses: peter-evans/create-issue-from-filev3
+        with:
+          title: "Sentinel broke in PR #${{ github.event.pull_request.number }}"
+          content-filepath: ./err.txt
+          labels: |
+            sentinel
+            automated issue
+            bug
+          assignees: bicobus
