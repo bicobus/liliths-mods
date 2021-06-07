@@ -17,10 +17,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Retrieve list of modified files
+        id: list-files
+        run: |
+          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
+          FILES=$(curl -s -X GET -G $URL | jq -r '.[] | .filename')
+          echo "::set-output name=files::$FILES"
+
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -w **/*.json
+          prettier_options: -w ${{ steps.list-files.output.files }}
           only_changed: True
           dry: True
         env:
