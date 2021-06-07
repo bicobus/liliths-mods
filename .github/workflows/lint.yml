@@ -1,5 +1,4 @@
 name: lint
-description: Runs prettier on various json files.
 
 on:
   pull_request:
