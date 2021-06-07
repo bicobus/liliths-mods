@@ -12,6 +12,7 @@
   "properties": {
     "url": {
       "type": "string",
+      "format": "iri",
       "description": "The url where the mod is stored."
     },
     "summary": {
@@ -29,7 +30,7 @@
     "last_edited": {
       "type": "string",
       "format": "date",
-      "description": "A date, format yyyy-mm-dd"
+      "description": "A date, format yyyy-mm-dd."
     },
     "mod_version": {
       "type": "string",
@@ -41,8 +42,8 @@
     },
     "cover": {
       "type": "string",
-      "format": "uri",
-      "description": "The image displayed in the mod list. Please use URL's for images, not data blobs."
+      "format": "iri",
+      "description": "The image displayed in the mod list. Must be a valid URL."
     },
     "types": {
       "description": "Categories pertaining to your mod.",
@@ -72,17 +73,20 @@
       "title": "Dependencies",
       "description": "Modules required for your mod to function properly.",
       "type": "array",
-      "contains": { "type": "string" }
+      "items": { "type": "string", "description": "Must be a valid string." }
     },
     "images": {
       "type": "array",
-      "contains": { "type": "string", "format": "uri" },
-      "description": "A widget that shows additional images near the top of the mod page."
+      "items": {
+        "type": "string",
+        "format": "iri",
+        "description": "Url of an image to be displayed in a gallery near the top of the mod page."
+      }
     },
     "tags": {
       "description": "A list of words that can be used to find the mod when filtering on them.",
       "type": "array",
-      "contains": { "type": "string" }
+      "items": { "type": "string", "description": "Must be a valid string." }
     }
   }
 }

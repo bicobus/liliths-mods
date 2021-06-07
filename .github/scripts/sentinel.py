@@ -7,18 +7,23 @@ comment in the related PR.
 import argparse
 import errno
 import json
-import textwrap
 from json import JSONDecodeError
 from pathlib import Path
 
-from jsonschema import Draft7Validator
+from jsonschema import Draft7Validator, draft7_format_checker
 
 # this is so dumb, but I don't have to import os.
 basepath = Path(__file__).resolve().parts[:-3]
 JSONFILE = Path(*basepath, "template.json")
 
+_WARN_BADFORMAT = (
+    "* {message}.\n"
+    "* Problematic property: {prop!r}\n"
+    "* A description of the property: {desc}"
+)
 _WARN_REQUIRED = (
-    "{}. Please verify your file and make sure the following properties are populated:"
+    "{message}.<br>\n"
+    "Please verify your file and make sure the following properties are populated:\n"
     " `{}`"
 )
 _WARN_ENUM_NONMEMBER = (
@@ -71,13 +76,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Exit early if we either have no file or none of them are json.
-    if not args.file or not any(f.endswith('.json') for f in args.file):
+    if not args.file or not any(f.endswith(".json") for f in args.file):
         exit
 
     diagnostics = []
     schema = graceful_load(JSONFILE)
     # TODO: fail gracefully if Draft7Validator raise an exception
-    validator = Draft7Validator(schema)
+    validator = Draft7Validator(schema, format_checker=draft7_format_checker)
     error_msgs = []
     for jfile in args.file:
         if not jfile.endswith(".json"):
@@ -101,14 +106,22 @@ if __name__ == "__main__":
                 )
             elif error.validator == "required":
                 message = _WARN_REQUIRED.format(error.message, error.validator_value)
+            elif error.validator == "format" and error.validator_value in (
+                "date",
+                "uri",
+                "iri",
+            ):
+                message = _WARN_BADFORMAT.format(
+                    message=error.message,
+                    prop=error.path.popleft(),
+                    desc=error.schema["description"],
+                )
             else:
                 message = error.message
 
             error_msgs.append(
                 _ERROR_MSG.format(
-                    path=jfile,
-                    etype=error.__class__.__name__,
-                    message=textwrap.fill(message),
+                    path=jfile, etype=error.__class__.__name__, message=message
                 )
             )
 
