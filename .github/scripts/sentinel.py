@@ -7,6 +7,7 @@ comment in the related PR.
 import argparse
 import errno
 import json
+import sys
 from json import JSONDecodeError
 from pathlib import Path
 
@@ -41,7 +42,7 @@ _ERROR_MSG = """
 """
 
 
-def graceful_load(jfile):
+def graceful_load(jfile, msgs):
     try:
         file = open(jfile)
     except (IOError, OSError) as e:
@@ -62,7 +63,7 @@ def graceful_load(jfile):
         try:
             return json.load(file)
         except JSONDecodeError as e:
-            diagnostics.append(
+            msgs.append(
                 _ERROR_MSG.format(path=file, etype="JSONDecodeError", message=e.msg)
             )
             return None
@@ -80,19 +81,19 @@ if __name__ == "__main__":
         exit
 
     diagnostics = []
-    schema = graceful_load(JSONFILE)
+    error_msgs = []
+    schema = graceful_load(JSONFILE, error_msgs)
     # TODO: fail gracefully if Draft7Validator raise an exception
     validator = Draft7Validator(schema, format_checker=draft7_format_checker)
-    error_msgs = []
     for jfile in args.file:
         if not jfile.endswith(".json"):
             continue
         # TODO: check for proper path to jfile
         # TODO: trim excess parents from jfile if necessary
-        instance = graceful_load(jfile)
+        instance = graceful_load(jfile, error_msgs)
         if not instance:
-            error_msgs.extends(diagnostics)
-            diagnostics = []
+            # error_msgs.extends(diagnostics)
+            # diagnostics = []
             continue
         for error in validator.iter_errors(instance):
             if error.validator == "contains" and not error.instance:
@@ -125,6 +126,9 @@ if __name__ == "__main__":
                 )
             )
 
-    if error_msgs:  # Exit with an error to fail the CI.
+    if error_msgs:
         print("\n- - -\n".join(error_msgs))
+    if diagnostics:
+        print(">>>", file=sys.stderr)
+        print("\n".join(diagnostics), file=sys.stderr)
         exit(1)
