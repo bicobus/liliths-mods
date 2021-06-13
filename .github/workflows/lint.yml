@@ -102,7 +102,8 @@ jobs:
             bug
           assignees: bicobus
 
-      - uses: actions/upload-artifact@v2
+      - if: ${{ steps.checks.outputs.breakage == 'true' }}
+        uses: actions/upload-artifact@v2
         with:
           name: sentinel_output
           path: |
@@ -123,9 +124,24 @@ jobs:
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
           body: |
             Blip Blop I'm a robot, and I detected that your submission did not pass the verification process.
 
             ${{ steps.checks.outputs.body }}
-            --
-            This comment will automatically be updated as you update your pull request.
+
+            - - -
+
+            *This comment will automatically be updated as you update your pull request.*
+
+      - if: ${{ steps.checks.outputs.has_report == 'no' }}
+        name: Create cleared comment on PR
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            Blip Blop i'm a robot. I haven't found any issues with your current submission.
+
+            I'll keep my eyes open and change this comment if any updates are added to this pull request.

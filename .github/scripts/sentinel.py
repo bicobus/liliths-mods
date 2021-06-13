@@ -17,29 +17,49 @@ from jsonschema import Draft7Validator, draft7_format_checker
 basepath = Path(__file__).resolve().parts[:-3]
 JSONFILE = Path(*basepath, "template.json")
 
-_WARN_BADFORMAT = (
-    "* {message}.\n"
-    "* Problematic property: {prop!r}\n"
-    "* A description of the property: {desc}"
-)
-_WARN_REQUIRED = (
-    "{message}.<br>\n"
-    "Please verify your file and make sure the following properties are populated:\n"
-    " `{}`"
-)
-_WARN_ENUM_NONMEMBER = (
-    "Property {prop!r} contains a value which wasn't found in the predefined set.<br> "
-    "{item!r} (index:{idx}), is not one of `{family}`."
-)
-_WARN_OPT_EMPTY = (
-    "An optional property ({prop!r}) has been found to be empty, and it is therefore "
-    "useless to include it in your file. You need to remove it."
-)
+_WARN_BADFORMAT = """#### Property {prop!r} is erronous!
+
+* error: {message}.
+* A description of the property: {desc}
+"""
+
+_WARN_REQUIRED = """#### Required property not found.
+
+{rmessage}.
+
+Please make sure the following properties are present in your json: `{required}`
+"""
+
+_WARN_ENUM_NONMEMBER = """#### Property {prop!r} is invalid.
+
+Property {prop!r} contains a value which wasn't found in the predefined set.
+
+{item!r} (index:{prop_idx}), is not one of `{family}`.
+"""
+
+_WARN_OPT_EMPTY = """#### Property {prop!r} is empty.
+
+An optional property ({prop!r}) has been found to be empty, and it is therefore
+useless to include it in your file. You should consider removing it.
+"""
+
 _ERROR_MSG = """
 ### {path} — {etype}
 
 {message}
 """
+_ERROR_TPL = """
+### {path}
+
+{message}
+"""
+output_msgs = {}
+
+
+def mput(idx, msg, **kwargs):
+    output_msgs.setdefault(idx, [])
+    output_msgs[idx].append(msg.format(**kwargs))
+    return output_msgs[idx][-1]
 
 
 def graceful_load(jfile, msgs):
@@ -58,7 +78,7 @@ def graceful_load(jfile, msgs):
                 ).format(jfile),
             )
         )
-        raise  # FIXME: The message might be redundant
+        return None
     with file:
         try:
             return json.load(file)
@@ -78,7 +98,7 @@ if __name__ == "__main__":
 
     # Exit early if we either have no file or none of them are json.
     if not args.file or not any(f.endswith(".json") for f in args.file):
-        exit
+        sys.exit()
 
     diagnostics = []
     error_msgs = []
@@ -88,47 +108,52 @@ if __name__ == "__main__":
     for jfile in args.file:
         if not jfile.endswith(".json"):
             continue
-        # TODO: check for proper path to jfile
-        # TODO: trim excess parents from jfile if necessary
         instance = graceful_load(jfile, error_msgs)
         if not instance:
-            # error_msgs.extends(diagnostics)
-            # diagnostics = []
             continue
         for error in validator.iter_errors(instance):
             if error.validator == "contains" and not error.instance:
-                message = _WARN_OPT_EMPTY.format(prop=error.path.pop())
+                mput(jfile, _WARN_OPT_EMPTY, prop=error.path.popleft())
             elif error.validator == "enum":
-                message = _WARN_ENUM_NONMEMBER.format(
-                    idx=error.path.pop(),
+                mput(
+                    jfile,
+                    _WARN_ENUM_NONMEMBER,
+                    prop_idx=error.path.pop(),
                     prop=error.path.pop(),
                     item=error.instance,
                     family=error.validator_value,
                 )
             elif error.validator == "required":
-                message = _WARN_REQUIRED.format(error.message, error.validator_value)
+                mput(
+                    jfile,
+                    _WARN_REQUIRED,
+                    rmessage=error.message,
+                    required=error.validator_value
+                )
             elif error.validator == "format" and error.validator_value in (
                 "date",
                 "uri",
                 "iri",
             ):
-                message = _WARN_BADFORMAT.format(
+                mput(
+                    jfile,
+                    _WARN_BADFORMAT,
                     message=error.message,
                     prop=error.path.popleft(),
-                    desc=error.schema["description"],
+                    desc=error.schema["description"]
                 )
             else:
-                message = error.message
+                mput(jfile, error.message)
 
-            error_msgs.append(
-                _ERROR_MSG.format(
-                    path=jfile, etype=error.__class__.__name__, message=message
-                )
-            )
-
+    if output_msgs:
+        errors = []
+        for f, msgs in output_msgs.items():
+            errors.append(_ERROR_TPL.format(path=f, message="\n".join(msgs)))
+        if errors:
+            print("\n- - -\n".join(errors))
     if error_msgs:
         print("\n- - -\n".join(error_msgs))
     if diagnostics:
         print(">>>", file=sys.stderr)
         print("\n".join(diagnostics), file=sys.stderr)
-        exit(1)
+        sys.exit(1)
