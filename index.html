@@ -8,6 +8,20 @@
     <body>
         <div id="banner">
             <img src="">
+            <div id="options">
+                <div id="order">
+                    <div class="activeOrder">▲</div>
+                    <div onclick="orderClicked()">▼</div>
+                </div>
+                <div class="dropdown">
+                    <div id="sortWord">unsorted</div>
+                    <a href="#" onclick="sortWordClicked('title')">title</a>
+                    <a href="#" onclick="sortWordClicked('author')">author</a>
+                    <a href="#" onclick="sortWordClicked('last_edited', 'date')">date</a>
+                    <a href="#" onclick="sortWordClicked('mod_version', 'mod version')">mod version</a>
+                    <a href="#" onclick="sortWordClicked('LT_version', 'game version')">game version</a>
+                </div>
+            </div>
             <input id="filter" type="text" placeholder="filter" oninput="filterEntries()">
         </div>
     

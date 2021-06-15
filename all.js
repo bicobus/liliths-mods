@@ -1,43 +1,147 @@
 modList = document.getElementById("modList")
 content = document.getElementById("content")
 filter = document.getElementById("filter")
+order = document.getElementById("order")
 mods = []
+lastClicked = null
+sortWord = null
+sortWordDiv = document.getElementById("sortWord")
+filterStrings = ['title', 'description', 'summary', 'author', 'last_edited', 'mod_version', 'LT_version']
+filterArrays  = ['types', 'tags']
 //add non-git mod JSON url's to this array to test them
 var modJSONS = []
 
-hasRegex = function(dict, regex){
-    for (key in dict) {
-        if(Array.isArray(dict[key])){
-            for(string in dict[key]){
-                if(string.match(regex)) return true
-            }
-        }
-        else if(dict[key].match(regex)) return true
+sorts = function(a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()) > 0 }
+
+orderClicked = function(){
+    if(order.children[0].classList.contains("activeOrder")){
+        order.children[0].classList.remove("activeOrder")
+        order.children[0].setAttribute("onclick","orderClicked()")
+        order.children[1].classList.add("activeOrder")
+        order.children[1].setAttribute("onclick","")
+        sorts = function(a, b) { return b.toLowerCase().localeCompare(a.toLowerCase()) > 0 }
+    }else{
+        order.children[0].classList.add("activeOrder")
+        order.children[0].setAttribute("onclick","")
+        order.children[1].classList.remove("activeOrder")
+        order.children[1].setAttribute("onclick","orderClicked()")
+        sorts = function(a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()) > 0 }
     }
-    return false
+    sortMods()
 }
 
-filterEntries = function (){
-    var regex = filter.value
-    mods.forEach((mod, index) =>{
-        if(!regex || hasRegex(mod, regex)) modList.childNodes[index].style.display = ""
-        else modList.childNodes[index].style.display = "none"
+sortWordClicked = function(key, key2){
+    if(!key2)key2 = key
+    sortWordDiv.innerHTML = key2
+    sortWord = key
+    sortMods()
+}
+
+swapIndexes = function(pos1, pos2){
+    var tmp = mods[pos1]
+    mods[pos1] = mods[pos2]
+    mods[pos2] = tmp
+    var cld1 = modList.childNodes[pos1]
+    var cld2 = modList.childNodes[pos2]
+    tmp = cld1.nextElementSibling
+    modList.insertBefore(cld1, cld2.nextElementSibling)
+    modList.insertBefore(cld2, tmp)
+    tmp = cld1.onclick
+    cld1.onclick = cld2.onclick
+    cld2.onclick = tmp
+}
+
+sortMods = function(){
+    if(sortWord){
+        lastClicked = null
+        content.innerHTML = ""
+        var size = mods.length
+        for(var sorted = 0;sorted < size - 1;sorted++){
+            var largest = sorted
+            for (var unsorted = sorted + 1;unsorted < size;unsorted++){
+                if (sorts(mods[largest][sortWord], mods[unsorted][sortWord])) largest = unsorted
+            }
+            if (largest != sorted) swapIndexes(largest, sorted)
+        }
+    }
+}
+
+filterEntries = function(){
+    var regex = [['all', filter.value]]
+    
+    mods.forEach((mod, index) => {
+        var passedList = []
+        filterStrings.forEach(fString => {
+            var matches = []
+            if(mod[fString]){
+                mod[fString] = mod[fString].replaceAll("<match>", "").replaceAll("</match>", "")
+                regex.forEach((rule, rIndex) => {
+                    var reg = new RegExp(rule[1], 'i')
+                    if(rule[0] == 'all' || rule[0] == fString) {
+                        var match = mod[fString].match(reg)
+                        if(match){
+                            passedList[rIndex] = true
+                            matches.push(match)
+                        }
+                    }
+                })
+            }
+            var text = mod[fString]
+            matches.sort(function(first, second){first.index > second.index})
+            matches.forEach(item => {text = text.substr(0, item['index']) + "<match>" + item[0] + "</match>" + text.substr(item['index'] + item[0].length)})
+            mod[fString] = text
+            var node = modList.children[index].getElementsByClassName(fString)[0]
+            if(node)node.innerHTML = text
+            if(index === lastClicked) {
+                node = content.getElementsByClassName(fString)[0]
+                if(node) node.innerHTML = text
+            }
+        })
+        filterArrays.forEach(fArray => {
+            if(mod[fArray]){
+                mod[fArray].forEach((string, mIndex) => {
+                    string = string.replaceAll("<match>", "").replaceAll("</match>", "")
+                    var matches = []
+                    regex.forEach((rule, rIndex) => {
+                        var reg = new RegExp(rule[1], 'i')
+                        if(rule[0] == 'all' || rule[0] == fArray) {
+                            var match = string.match(reg)
+                            if(match){
+                                passedList[rIndex] = true
+                                matches.push(match)
+                            }
+                        }
+                    })
+                    matches.sort(function(first, second){first.index > second.index})
+                    matches.forEach(item => {string = string.substr(0, item['index']) + "<match>" + item[0] + "</match>" + string.substr(item['index'] + item[0].length)})
+                    mod[fArray][mIndex] = string
+                    if(index === lastClicked) {
+                        var node = content.getElementsByClassName(fArray)[mIndex]
+                        if(node) node.innerHTML = string
+                    }
+                })
+            }
+        })
+        if(passedList.every(item => {item == true})) modList.childNodes[index].style.display = "none"
+        else modList.childNodes[index].style.display = ""
     })
 }
 
 modClicked = function(index){
-    // manage selected effect
-    var list = document.getElementsByClassName("active")
     content.innerHTML = ""
+    lastClicked = index
+
+    // manage selected effect
+    var list = document.getElementsByClassName("activeMod")
     for (var i = 0; i < list.length; i++) {
         if (list[i] == modList.childNodes[index]){
             // mod is deselected, show nothing
-            list[i].classList.remove("active")
+            list[i].classList.remove("activeMod")
             return
         }
-        list[i].classList.remove("active")
+        list[i].classList.remove("activeMod")
     }
-    modList.childNodes[index].classList.add("active")
+    modList.childNodes[index].classList.add("activeMod")
     item = mods[index]
 
     // define sub-structures
@@ -50,29 +154,29 @@ modClicked = function(index){
 
     var info =
         "<divider><p>Info</p><cloud>"
-            + "<li>Author:           " + item.author.replaceAll("<", "&lt;")
-            + "</li><li>last edited:  " + item.last_edited.replaceAll("<", "&lt;")
-            + "</li><li>mod version:  " + item.mod_version.replaceAll("<", "&lt;")
-            + "</li><li>Game version: " + item.LT_version.replaceAll("<", "&lt;")
-        + "</li></cloud></divider>"
+            + "<li>Author : <span class='author'>" + item.author
+            + "</span></li><li>last edited : <span class='last_edited'>" + item.last_edited
+            + "</span></li><li>mod version : <span class='mod_version'>" + item.mod_version
+            + "</span></li><li>Game version : <span class='LT_version'>" + item.LT_version
+        + "</span></li></cloud></divider>"
 
     var types = "<divider><p>Types</p><cloud>"
-    item.types.forEach(type => types += "<li>" + type + "</li>")
+    item.types.forEach(type => types += "<li class='types'>" + type + "</li>")
     types += "</cloud></divider>"
 
     var tags = ""
     if(item.tags && item.tags.length > 0){
         tags += "<divider><p>Tags</p><cloud>"
-        item.tags.forEach(tag => tags += "<li>" + tag + "</li>")
+        item.tags.forEach(tag => tags += "<li class='tags'>" + tag + "</li>")
         tags += "</cloud></divider>"
     }
 
     // define main structure
     content.innerHTML
-        = "<h1>" + item.title + "</h1>"
+        = "<h1 class='title'>" + item.title + "</h1>"
         + "<a href = '" + item.url + "', target = '_blank', rel = 'noreferrer noopener'>Download</a>"
         + images
-        + "<cloud>" + item.description + "</cloud>"
+        + "<cloud class='description'>" + item.description + "</cloud>"
         + info
         + types
         + tags
@@ -82,8 +186,8 @@ generateModList = function(){
     mods.forEach((item, index) => {
         // get variables
         var summary = ""
-        if(item.summary) summary = item.summary
-        else if (item.description) summary = item.description
+        if(item.summary) summary = "summary'>" + item.summary
+        else if (item.description) summary = "description'>" + item.description
 
         var cover = ""
         if(item.cover) cover = item.cover
@@ -93,9 +197,9 @@ generateModList = function(){
         // assemble list item
         modList.innerHTML += 
         "<div onclick='modClicked(" + index + ")'>"
-            + "<p>" + item.title + "</p>"
+            + "<p class='title'>" + item.title + "</p>"
             + "<cloud>"
-                + "<summary>" + summary + "</summary>"
+                + "<summary class='" + summary + "</summary>"
                 + "<imgbox><img src='" + cover + "'></imgbox>"
             + "</cloud>"
         + "</div>"

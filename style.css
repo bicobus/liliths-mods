@@ -25,7 +25,8 @@ body {
 
 #banner {
     width: 100%;
-    height: 10%;
+    height: 3%;
+    position: fixed;
     background-color: #19191A;
 }
 
@@ -33,14 +34,14 @@ body {
     overflow-y: scroll;
     direction:rtl;
     position: fixed;
-    top: 10%;
+    top: 3%;
     bottom: 0;
     right: 70%;
 }
 
 #content {
     position: fixed;
-    top: 10%;
+    top: 3%;
     bottom: 0;
     right: 0;
     left: 30%;
@@ -48,6 +49,7 @@ body {
     overflow-y: auto;
     font-size:  larger;
     background-color: #19191A;
+    z-index: -1;
 }
 
 #modList > * {
@@ -59,8 +61,51 @@ body {
     cursor: pointer;
 }
 
-#filter {
-    margin-top: 10px;
+#banner > * {
+    float: left;
+    font-size: 100%;
+    height: 85%;
+}
+
+#options {
+    margin-left: 29.3%;
+}
+
+#order {
+    float: left;
+}
+
+#order > div {
+    height: 1.5%;
+}
+
+.dropdown {
+    float: right;
+    font-size: larger;
+    margin-right: 5px;
+    vertical-align: top;
+    background-color: #1E1E20;
+    padding: 2px;
+    border: 4px solid #1E1E20;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.dropdown > div {
+    border-bottom: 2px solid #840000;
+}
+
+.dropdown > a {
+    font-size: 0;
+    display: block;
+    transition: all .5s;
+    color: inherit;
+    text-decoration: none;
+}
+
+.dropdown:hover > a {
+    font-size: inherit;
+    border-bottom: 2px solid #840000;
 }
 
 p {
@@ -110,8 +155,12 @@ img {
     max-height: 100%;
 }
 
-.active {
+.activeMod {
     background-color: #efffff !important;
+}
+
+.activeOrder {
+    color: #840000 !important;
 }
 
 #content > h1 {
@@ -130,6 +179,10 @@ img {
     display: inline-block;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    width: 18%;
+}
+
+#content > a, #order > * {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select:none;
@@ -137,7 +190,6 @@ img {
     -o-user-select:none;
     color: inherit;
     text-decoration: none;
-    width: 18%;
 }
 
 #content > a:hover {
@@ -154,4 +206,8 @@ divider {
 
 li {
     text-align: left;
+}
+
+match {
+    background-color: #840000;
 }
