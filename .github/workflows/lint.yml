@@ -17,10 +17,23 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Retrieve list of modified files
+        id: list-files
+        run: |
+          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
+          FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename'))
+          for f in ${FILES[@]}; do
+            NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
+          done
+          echo "list_files=${NFILES}" >> $GITHUB_ENV
+          echo "::group::Files to check"
+          echo "${NFILES}"
+          echo "::endgroup::"
+
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -w **/*.json
+          prettier_options: -w ${{ env.list_files }}
           only_changed: True
           dry: True
         env:
