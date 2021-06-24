@@ -52,7 +52,7 @@ jobs:
         run: .github/scripts/sentinel.py ${{ needs.json_files.outputs.jfiles }} > msg.txt 2>err.txt
         continue-on-error: true
 
-      - name: Run validations against the jsonchema
+      - name: Message's sanitizing
         id: checks
         continue-on-error: true
         run: |
