@@ -62,20 +62,20 @@ def mput(idx, msg, **kwargs):
     return output_msgs[idx][-1]
 
 
-def graceful_load(jfile, msgs):
+def graceful_load(pfile, msgs):
     try:
-        file = open(jfile)
+        file = open(pfile)
     except (IOError, OSError) as e:
         if e.errno != errno.ENOENT:
             raise
         diagnostics.append(
             _ERROR_MSG.format(
-                path=jfile,
+                path=pfile,
                 etype="FileNotFound",
                 message=(
                     "Sentinel couldn't find the file `{!r}`. This is a bug and means "
                     "the CI is broken."
-                ).format(jfile),
+                ).format(pfile),
             )
         )
         return None
@@ -84,7 +84,11 @@ def graceful_load(jfile, msgs):
             return json.load(file)
         except JSONDecodeError as e:
             msgs.append(
-                _ERROR_MSG.format(path=file, etype="JSONDecodeError", message=e.msg)
+                _ERROR_MSG.format(
+                    path=pfile,
+                    etype="JSONDecodeError",
+                    message=f"The JSON couldn't be parsed:\n`{e}`",
+                )
             )
             return None
 
