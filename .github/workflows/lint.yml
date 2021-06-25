@@ -8,33 +8,127 @@ on:
       - 'mods/*.json'
 
 jobs:
-  prettier:
+  json_files:
     runs-on: ubuntu-latest
-
+    outputs:
+      jfiles: ${{ steps.list-files.outputs.jfiles }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2.3.4
-        with:
-          fetch-depth: 0
-
       - name: Retrieve list of modified files
+        if: ${{ !contains(github.event.pull_request.labels.*.names, 'gh-actions') }}
         id: list-files
         run: |
           URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
-          FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename'))
+          FILES=($(curl -s -X GET -G $URL | jq -r '.[] | .filename | @sh'))
           for f in ${FILES[@]}; do
-            NFILES+="$(echo $f | awk '/mods\/.*\.json$/') "
+            NFILES+="$(echo "$f " | awk '/mods\/.*\.json/')"
           done
-          echo "list_files=${NFILES}" >> $GITHUB_ENV
+          [[ -n "${NFILES}" ]] || exit 1
+          NFILES="${NFILES//'%'/'%25'}"
+          echo "::set-output name=jfiles::${NFILES}"
           echo "::group::Files to check"
           echo "${NFILES}"
           echo "::endgroup::"
 
-      - name: Prettify code
-        uses: creyD/prettier_action@v3.3
+  check-json-files:
+    runs-on: ubuntu-latest
+    needs: json_files
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
         with:
-          prettier_options: -w ${{ env.list_files }}
-          only_changed: True
-          dry: True
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: "3.x"
+
+      - run: |
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install jsonschema[format]
+
+      - name: Sentinel
+        run: .github/scripts/sentinel.py ${{ needs.json_files.outputs.jfiles }} > msg.txt 2>err.txt
+        continue-on-error: true
+
+      - name: Message's sanitizing
+        id: checks
+        continue-on-error: true
+        run: |
+          if [[ -s "msg.txt" ]]; then
+            echo "::set-output name=has_report::true"
+            body=$(<msg.txt)
+            body="${body//'%'/'%25'/}"
+            body="${body//$'\n'/'%0A'}"
+            body="${body//$'\r'/'%0D'}"
+            echo "::set-output name=body::$body"
+          else
+            echo "::set-output name=has_report::false"
+          fi
+          if [[ -s "err.txt" ]]; then
+            echo "::set-output name=breakage::true"
+            echo "::group::Error during validation."
+            echo "::warning File err.txt exists. Sentinel broke."
+            echo "::endgroup::"
+          fi
+
+      - if: ${{ steps.checks.outputs.breakage == 'true' }}
+        name: Report Sentinel breakage
+        uses: peter-evans/create-issue-from-file@v3
+        with:
+          title: "Sentinel broke in PR #${{ github.event.pull_request.number }}"
+          content-filepath: ./err.txt
+          labels: |
+            sentinel
+            automated issue
+            bug
+          assignees: bicobus
+
+      - if: ${{ steps.checks.outputs.breakage == 'true' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: sentinel_output
+          path: |
+            err.txt
+            msg.txt
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v1
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "Blip Blop I'm a robot"
+
+      - if: ${{ steps.checks.outputs.has_report == 'true' }}
+        name: Create comment on PR
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            Blip Blop I'm a robot, and I detected that your submission did not pass the verification process.
+
+            ${{ steps.checks.outputs.body }}
+
+            - - -
+
+            *This comment will automatically be updated as you update your pull request.*
+
+      - if: ${{ steps.checks.outputs.has_report == 'no' }}
+        name: Create cleared comment on PR
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            Blip Blop i'm a robot. I haven't found any issues with your current submission.
+
+            I'll keep my eyes open and change this comment if any updates are added to this pull request.
+
+      - if: ${{ steps.checks.outputs.breakage == 'true'}}
+        run: |
+          echo "::error Sentinel exited erroneously."
