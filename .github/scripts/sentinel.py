@@ -15,7 +15,7 @@ from jsonschema import Draft7Validator, draft7_format_checker
 
 # this is so dumb, but I don't have to import os.
 basepath = Path(__file__).resolve().parts[:-3]
-JSONFILE = Path(*basepath, "template.json")
+JSONFILE = Path(*basepath, ".github", "template.json")
 
 _WARN_BADFORMAT = """#### Property {prop!r} is erronous!
 

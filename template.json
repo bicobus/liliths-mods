@@ -1,92 +1,39 @@
 {
-  "$schema": "https://json-schema.org/schema#",
-  "type": "object",
-  "required": [
-    "url",
-    "description",
-    "author",
-    "mod_version",
-    "LT_version",
-    "types"
-  ],
-  "properties": {
-    "url": {
-      "type": "string",
-      "format": "iri",
-      "description": "The url where the mod is stored."
-    },
-    "summary": {
-      "type": "string",
-      "description": "Replaces the description in the mod list."
-    },
-    "description": {
-      "type": "string",
-      "description": "A description of the mod. You should add a summary if this variable gets too big."
-    },
-    "author": {
-      "type": "string",
-      "description": "The name of the modder."
-    },
-    "last_edited": {
-      "type": "string",
-      "format": "date",
-      "description": "A date, format yyyy-mm-dd."
-    },
-    "mod_version": {
-      "type": "string",
-      "description": "Version number of the mod."
-    },
-    "LT_version": {
-      "type": "string",
-      "description": "Version of LT it was last tested on, or built from in the case of a custom build."
-    },
-    "cover": {
-      "type": "string",
-      "format": "iri",
-      "description": "The image displayed in the mod list. Must be a valid URL."
-    },
-    "types": {
-      "description": "Categories pertaining to your mod.",
-      "type": "array",
-      "items": {
-        "enum": [
-          "clothing",
-          "outfit",
-          "set",
-          "status effect",
-          "attack",
-          "race",
-          "tattoo",
-          "item",
-          "weapon",
-          "event",
-          "encounter",
-          "location",
-          "npc",
-          "other",
-          "outside mod folder",
-          "custom build"
-        ]
-      }
-    },
-    "dependencies": {
-      "title": "Dependencies",
-      "description": "Modules required for your mod to function properly.",
-      "type": "array",
-      "items": { "type": "string", "description": "Must be a valid string." }
-    },
-    "images": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "format": "iri",
-        "description": "Url of an image to be displayed in a gallery near the top of the mod page."
-      }
-    },
-    "tags": {
-      "description": "A list of words that can be used to find the mod when filtering on them.",
-      "type": "array",
-      "items": { "type": "string", "description": "Must be a valid string." }
-    }
-  }
+    "url"              : "<The url where the mod is stored>",
+    "summary"          : "<OPTIONAL: replaces the description in the mod list>",
+    "description"      : "<A description of the mod. You should add a summary if this variable gets too big>",
+    "author"           : "<The name of the modder>",
+    "last_edited"      : "<Use format yyyy-mm-dd>",
+    "mod_version"      : "<Version number of the mod>",
+    "LT_version"       : "<Version of LT it was last tested on, or built from in the case of a custom build>",
+    "cover"            : "<OPTIONAL: The image displayed in the mod list. Please use URL's for images, not data blobs>",
+    "types":[
+        "<Delete whatever doesn't apply>",
+        "clothing",
+        "outfit",
+        "set",
+        "status effect",
+        "attack",
+        "race",
+        "tattoo",
+        "item",
+        "weapon",
+        "event",
+        "encounter",
+        "location",
+        "npc",
+        "other",
+        "outside mod folder",
+        "custom build"
+    ],
+    "dependencies":[
+        "<OPTIONAL: A list of the names of each mod required for this one>"
+    ],
+    "images":[
+        "<OPTIONAL: A widget that shows additional images near the top of the mod page>",
+        "<You can add multiple images>"
+    ],
+    "tags":[
+        "<OPTIONAL: A list of words that can be used to find the mod when filtering on them>"
+    ]
 }
